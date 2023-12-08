@@ -1,1 +1,1 @@
-import ubereats.ubereats as ue
+import ubereats.ubereats as ubereats

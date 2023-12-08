@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='marketscraper',
+    name='ubereats',
     version='1.0',
     packages=find_packages(),
        install_requires=[
@@ -14,6 +14,6 @@ setup(
         'numpy',
     ],
     include_package_data=True, 
-    url='https://github.com/labdatos-se/marketscraper',
+    url='https://github.com/labdatos-se/ubereats',
     author='Claudio Daniel Pacheco-Castro',
     author_email='claudio@comunidad.unam.mx')

@@ -1,1 +1,1 @@
-from ubereats import ubereats
+import ubereats.ubereats as ue

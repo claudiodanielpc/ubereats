@@ -17,7 +17,6 @@ import geopandas as gpd
 from shapely import wkt
 
 
-
 options = webdriver.ChromeOptions()
 options.add_argument('--incognito')
 options.add_argument('--disable-blink-features=AutomationControlled')
@@ -27,14 +26,7 @@ options.add_argument('--disable-cookies')
 
 driver=webdriver.Chrome(service=Service(),options=options)
 driver.set_window_size(1920, 1080)
-import time
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
-import pandas as pd
+
 
 def basica(address, producto):
     options = webdriver.ChromeOptions()
@@ -126,11 +118,6 @@ def basica(address, producto):
     df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'direccion_busca': cp,'fecha_consulta':pd.to_datetime('today')})
     driver.quit()
     return df
-
-# Example usage
-df_result = basica("06720 cdmx", "platano")
-print(df_result)
-
 
 
 

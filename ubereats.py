@@ -94,7 +94,7 @@ def basica(address, producto):
         store_url = row['url']
         store_name = row['name']
         store_sucursal = row['sucursal']
-        driver.get("https://www.ubereats.com" + store_url)
+        driver.get(store_url)
 
         # Search for the product
         time.sleep(3)
@@ -112,7 +112,7 @@ def basica(address, producto):
             # ... (product extraction and data appending process)
 
         except Exception as e:
-            print(f"Error in store {store_name}: {e}")
+            print(f"Error en tienda {store_name}: {e}")
 
     # Create DataFrame from collected data
     df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'direccion_busca': cp,'fecha_consulta':pd.to_datetime('today')})

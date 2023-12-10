@@ -23,15 +23,6 @@ options.add_argument('--incognito')
 options.add_argument('--headless')
 
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from bs4 import BeautifulSoup
-import pandas as pd
-import time
-
 def buscador(tipo_busqueda, adress, producto):
     options = webdriver.ChromeOptions()
     # You can set Chrome options here if needed
@@ -67,10 +58,6 @@ def buscador(tipo_busqueda, adress, producto):
         stores = [{'name': link.find('h3').get_text(), 'url': link['href']} for link in store_links]
 
         df_stores = pd.DataFrame(stores)
-        df_stores = df_stores[df_stores['name'].str.contains('Soriana|Sumesa|City Market|Comer|Chedraui')]
-
-    elif tipo_busqueda == "avanzada":
-        # In advanced search, the 'adress' parameter is expected to be the direct URL of the store
         df_stores = pd.DataFrame([{'name': adress.split('/')[-1].replace('-', ' '), 'url': adress}])
 
     # The following code is common for both basic and advanced searches

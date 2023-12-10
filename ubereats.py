@@ -106,7 +106,33 @@ def basica(address, producto):
             # Extract product info
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
-            # ... (product extraction and data appending process)
+            product_items = soup.find_all('div', attrs={'data-testid': lambda value: value and value.startswith('store-menu-item')})
+        
+            for item in product_items:
+                # Extract rich-text elements, which should contain the price and product name
+                rich_texts = item.find_all('span', {'data-testid': 'rich-text'})
+                if len(rich_texts) >= 2:  # Make sure there are at least two rich-text elements
+                    try:
+                        price = rich_texts[0].get_text(strip=True)
+                        prod_name = rich_texts[1].get_text(strip=True)
+                        prod.append(prod_name)
+                        precios.append(price)
+                        tienda.append(store_name)
+                        sucursal.append(store_sucursal)
+                    except Exception as e:
+                        print(f"Error extracting data for store: {store_name} - {e}")
+                        prod.append(None)
+                        precios.append(None)
+                        tienda.append(store_name)
+                        sucursal.append(store_sucursal)
+                else:
+                    # If not enough span elements found, append None values
+                    prod.append(None)
+                    precios.append(None)
+                    tienda.append(store_name)
+                    sucursal.append(store_sucursal)
+
+
 
         except Exception as e:
             print(f"Error en tienda {store_name}: {e}")

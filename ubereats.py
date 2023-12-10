@@ -17,42 +17,43 @@ import geopandas as gpd
 from shapely import wkt
 
 
-def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
-    # Initialize an empty DataFrame at the start
-    df = pd.DataFrame(columns=['producto', 'precio', 'tienda', 'sucursal', 'direccion_busca', 'fecha_consulta'])
-    
-    options = webdriver.ChromeOptions()
-    options.add_argument('--incognito')
-    # Consider using headless mode if you don't need a browser UI
-    # options.add_argument('--headless')
 
-    # Initialize the WebDriver
+options = webdriver.ChromeOptions()
+options.add_argument('--incognito')
+options.add_argument('--disable-blink-features=AutomationControlled')
+options.add_argument('--disable-cache')
+options.add_argument('--disable-cookies')
+#options.add_argument('--headless')
+
+driver=webdriver.Chrome(service=Service(navegador.select_chromedriver()),options=options)
+driver.set_window_size(1920, 1080)
+
+
+def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
+
     driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 10)
+    df_stores = pd.DataFrame()  # Initialize an empty DataFrame
 
     try:
         if tipo_busqueda == "básica":
             # URL setup
-            # Make sure to use the correct URL for your purpose
-            url = "https://www.ubereats.com/category-feed/Shop?mod=locationManager&modctx=feed&next=%2Fcategory-feed%2FShop%3Fpl%3DJTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZEUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%253D%26ps%3D1%26sc%3DSHORTCUTS&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZEUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%3D&ps=1&sc=SHORTCUTS"
+            url = "YOUR_UBEREATS_URL_HERE"  # Replace with the actual URL you need to use
             driver.get(url)
-            try:
+
             # Wait for the input element to be clickable and input the address
-                control_direct = wait.until(
-                    EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
-                )
-                control_direct.clear()
-                control_direct.send_keys(adress)
-                time.sleep(3)  # It's better to use explicit waits rather than sleep
-                control_direct.send_keys(Keys.RETURN)
-            except Exception as e:
-                print("Error:", e)
-            time.sleep(3)  # Again, prefer explicit waits
+            control_direct = wait.until(
+                EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
+            )
+            control_direct.clear()
+            control_direct.send_keys(adress)
+            control_direct.send_keys(Keys.RETURN)
+            # Wait for the results to be loaded, preferably with WebDriverWait
 
             # Visit the grocery page
             grocery_url = "https://www.ubereats.com/category-feed/Grocery?stores=all"
             driver.get(grocery_url)
-            time.sleep(3)  # Replace with explicit wait if possible
+            # Wait for the page to be loaded, preferably with WebDriverWait
 
             # Extract HTML content
             html = driver.page_source
@@ -67,12 +68,17 @@ def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
             df_stores['sucursal'] = df_stores['url'].apply(lambda x: x.split('/store/')[1].split('/')[0].replace('-', ' '))
             df_stores['url'] = 'https://www.ubereats.com' + df_stores['url']
             df_stores['cp'] = adress
-    except Exception as e:
-        print("Selecciona una opción válida:", e)
 
-            
+    except Exception as e:
+        print("An error occurred:", e)
+    finally:
+        driver.quit()  # Ensure the driver is quit properly
 
     return df_stores
+
+# Example usage:
+# df_stores = buscador("básica", "Some Address", "product1")
+
 
 
 

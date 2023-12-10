@@ -67,6 +67,8 @@ def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
             df_stores['sucursal'] = df_stores['url'].apply(lambda x: x.split('/store/')[1].split('/')[0].replace('-', ' '))
             df_stores['url'] = 'https://www.ubereats.com' + df_stores['url']
             df_stores['cp'] = adress
+    except Exception as e:
+        print("Selecciona una opción válida:", e)
 
             
 

@@ -35,7 +35,7 @@ def basica(address, producto):
     #url="https://www.ubereats.com"
     url="https://www.ubereats.com/category-feed/Shop?mod=locationManager&modctx=feed&next=%2Fcategory-feed%2FShop%3Fpl%3DJTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%253D%26ps%3D1%26sc%3DSHORTCUTS&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%3D&ps=1&sc=SHORTCUTS"
     driver.get(url)
-    print("Buscando", producto, "en los supermercados de Uber Eats. Por favor espere⏳...")
+    print("Buscando", producto, "en los supermercados de Uber Eats para la ubicación ", address,". Por favor espere⏳...")
 
     # Set the location
     try:
@@ -89,7 +89,7 @@ def basica(address, producto):
     sucursal = []
 
     # Search for each product in every store
-    for index, row in tqdm(df_stores.iterrows(), total=df_stores.shape[0], desc="Buscando..."):
+    for index, row in tqdm(df_stores.iterrows(), total=df_stores.shape[0], desc="Recolectando productos y precios😊"):
 
         store_url = row['url']
         store_name = row['name']

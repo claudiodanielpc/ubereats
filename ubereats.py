@@ -38,13 +38,13 @@ def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
             driver.get(url)
             try:
             # Wait for the input element to be clickable and input the address
-            control_direct = wait.until(
-                EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
-            )
-            control_direct.clear()
-            control_direct.send_keys(adress)
-            time.sleep(3)  # It's better to use explicit waits rather than sleep
-            control_direct.send_keys(Keys.RETURN)
+                control_direct = wait.until(
+                    EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
+                )
+                control_direct.clear()
+                control_direct.send_keys(adress)
+                time.sleep(3)  # It's better to use explicit waits rather than sleep
+                control_direct.send_keys(Keys.RETURN)
             except Exception as e:
                 print("Error:", e)
             time.sleep(3)  # Again, prefer explicit waits

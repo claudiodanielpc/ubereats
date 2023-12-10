@@ -25,7 +25,7 @@ options.add_argument('--disable-cache')
 options.add_argument('--disable-cookies')
 #options.add_argument('--headless')
 
-driver=webdriver.Chrome(service=Service(navegador.select_chromedriver()),options=options)
+driver=webdriver.Chrome(service=Service(),options=options)
 driver.set_window_size(1920, 1080)
 
 

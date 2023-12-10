@@ -143,10 +143,15 @@ def basica(address, producto):
     # Create DataFrame from collected data
     df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'direccion_busca': cp,'fecha_consulta':pd.to_datetime('today')})
     df["precio"]=df["precio"].str.replace("MX$","")
+    #Eliminar comas
+    df["precio"]=df["precio"].str.replace(",","")
     #Split columna de precio en dos columnas si tiene "/"
     df[["precio","unidad"]]=df["precio"].str.split("/",expand=True)
     #Transformar columna de precio a float
     df["precio"]=pd.to_numeric(df["precio"])
+    df['producto']=df['producto'].str.lower()
+    #Quitar acentos 
+    df['producto']=df['producto'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
     driver.quit()
     return df
 

@@ -11,7 +11,7 @@ import time
 import requests
 import random
 from bs4 import BeautifulSoup
-import tqdm
+from tqdm import tqdm
 import googlemaps
 import geopandas as gpd
 from shapely import wkt
@@ -88,7 +88,8 @@ def basica(address, producto):
     sucursal = []
 
     # Search for each product in every store
-    for index, row in df_stores.iterrows():
+    for index, row in tqdm(df_stores.iterrows(), total=df_stores.shape[0], desc="Buscando..."):
+
         store_url = row['url']
         store_name = row['name']
         store_sucursal = row['sucursal']

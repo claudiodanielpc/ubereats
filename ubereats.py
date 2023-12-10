@@ -118,6 +118,12 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
                         precios.append(None)
                         tienda.append(store_name)
                         sucursal.append(store_sucursal)
+            except Exception as e:
+                print(f"Error extracting data for store: {store_name} - {e}")
+                prod.append(None)
+                precios.append(None)
+                tienda.append(store_name)
+                sucursal.append(store_sucursal)
 
         # Create DataFrame with collected data
         df = pd.DataFrame({
@@ -128,6 +134,7 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
             'direccion_busca': cp,
             'fecha_consulta': pd.to_datetime('today')
         })
+     
 
         # Normalize text data
         df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')

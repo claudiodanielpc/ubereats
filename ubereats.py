@@ -27,57 +27,111 @@ options.add_argument('--disable-cookies')
 
 driver=webdriver.Chrome(service=Service(),options=options)
 driver.set_window_size(1920, 1080)
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from bs4 import BeautifulSoup
+import pandas as pd
 
-
-def buscador(tipo_busqueda: str, adress: str, producto: str):
-
+def basica(address, producto):
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Optional: if you want to run Chrome in headless mode
     driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 10)
-    df_stores = pd.DataFrame()  # Initialize an empty DataFrame
 
+    # Navigate to the initial URL
+    url = "https://www.ubereats.com/category-feed/Shop?mod=locationManager&modctx=feed&..."
+    driver.get(url)
+
+    # Set the location
     try:
-        if tipo_busqueda == "basica":
-            # URL setup
-            url ="https://www.ubereats.com/category-feed/Shop?mod=locationManager&modctx=feed&next=%2Fcategory-feed%2FShop%3Fpl%3DJTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%253D%26ps%3D1%26sc%3DSHORTCUTS&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%3D&ps=1&sc=SHORTCUTS"
-            driver.get(url)
+        control_direct = wait.until(
+            EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
+        )
+        control_direct.clear()
+        cp=address
+        control_direct.send_keys(address)
+        time.sleep(3)
+        control_direct.send_keys(Keys.RETURN)
+    except Exception as e:
+        print("Error:", e)
+        driver.quit()
+        return
+    time.sleep(3)
 
-            # Wait for the input element to be clickable and input the address
-            control_direct = wait.until(
-                EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input"))
-            )
-            control_direct.clear()
-            control_direct.send_keys(adress)
-            control_direct.send_keys(Keys.RETURN)
-            # Wait for the results to be loaded, preferably with WebDriverWait
+    # Navigate to the grocery page
+    grocery = "https://www.ubereats.com/category-feed/Grocery?stores=all"
+    driver.get(grocery)
+    time.sleep(3)
 
-            # Visit the grocery page
-            grocery_url = "https://www.ubereats.com/category-feed/Grocery?stores=all"
-            driver.get(grocery_url)
-            # Wait for the page to be loaded, preferably with WebDriverWait
+    # Extract store links
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    store_links = soup.find_all('a', {'data-testid': 'store-card'})
+    stores = [{'name': link.find('h3').get_text(), 'url': link['href']} for link in store_links]
 
-            # Extract HTML content
+    # DataFrame for stores
+    df_stores = pd.DataFrame(stores)
+    df_stores=pd.DataFrame(stores)
+    #Dejar lo que está después de /store/ y antes del segundo /
+    #Hacer copia de de url
+    df_stores['sucursal']=df_stores['url'].copy()
+    df_stores['sucursal']=df_stores['sucursal'].str.split('/store/').str[1]
+    #Quitar lo que está después del segundo /
+    df_stores['sucursal']=df_stores['sucursal'].str.split('/').str[0]
+    #Eliminar "-" y reemplazar por espacio
+    df_stores['sucursal']=df_stores['sucursal'].str.replace('-',' ')
+    #Completar la url
+    df_stores['url']='https://www.ubereats.com'+df_stores['url']
+    #Dejar solo si contienen la palabra "Soriana", "Sumesa","City Market", "Comer", "Chedraui"
+    df_stores=df_stores[df_stores['name'].str.contains('Soriana|Sumesa|City Market|Comer|Chedraui')]
+    #Añadir columna de búsqueda de código postal
+    df_stores['cp']=cp
+
+    # Initialize lists for data collection
+    prod = []
+    precios = []
+    tienda = []
+    sucursal = []
+
+    # Search for each product in every store
+    for index, row in df_stores.iterrows():
+        store_url = row['url']
+        store_name = row['name']
+        store_sucursal = row['sucursal']
+        driver.get("https://www.ubereats.com" + store_url)
+
+        # Search for the product
+        time.sleep(3)
+        try:
+            product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
+            product_search.clear()
+            product_search.send_keys(producto)
+            time.sleep(3)
+            product_search.send_keys(Keys.ENTER)
+            time.sleep(3)
+
+            # Extract product info
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
-            store_links = soup.find_all('a', {'data-testid': 'store-card'})
-            
-            # Process store information
-            stores = [{'name': link.find('h3').get_text(), 'url': link['href']} for link in store_links]
-            df_stores = pd.DataFrame(stores)
-            
-            # Process store URLs and names
-            df_stores['sucursal'] = df_stores['url'].apply(lambda x: x.split('/store/')[1].split('/')[0].replace('-', ' '))
-            df_stores['url'] = 'https://www.ubereats.com' + df_stores['url']
-            df_stores['cp'] = adress
+            # ... (product extraction and data appending process)
 
-    except Exception as e:
-        print("An error occurred:", e)
-    finally:
-        driver.quit()  # Ensure the driver is quit properly
+        except Exception as e:
+            print(f"Error in store {store_name}: {e}")
 
-    return df_stores
+    # Create DataFrame from collected data
+    df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'direccion_busca': cp,'fecha_consulta':pd.to_datetime('today')})
+    driver.quit()
+    return df
 
-# Example usage:
-# df_stores = buscador("básica", "Some Address", "product1")
+# Example usage
+df_result = basica("06720 cdmx", "platano")
+print(df_result)
+
+
 
 
 

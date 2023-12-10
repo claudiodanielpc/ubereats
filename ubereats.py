@@ -29,7 +29,7 @@ driver=webdriver.Chrome(service=Service(),options=options)
 driver.set_window_size(1920, 1080)
 
 
-def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
+def buscador(tipo_busqueda: str, adress: str, producto: str):
 
     driver = webdriver.Chrome(options=options)
     wait = WebDriverWait(driver, 10)

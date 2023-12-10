@@ -138,7 +138,7 @@ def basica(address, producto):
 
 
         except Exception as e:
-            print(f"Error en tienda {store_name}: {e}")
+            print(f"Producto no encontrado en tienda {store_name}")
 
     # Create DataFrame from collected data
     df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'direccion_busca': cp,'fecha_consulta':pd.to_datetime('today')})

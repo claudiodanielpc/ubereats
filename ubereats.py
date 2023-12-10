@@ -68,61 +68,9 @@ def buscador(tipo_busqueda: str, adress: str, producto: str) -> pd.DataFrame:
             df_stores['url'] = 'https://www.ubereats.com' + df_stores['url']
             df_stores['cp'] = adress
 
-            # Initialize lists for data collection
-            prod = []
-            precios = []
-            tienda = []
-            sucursal = []
-
-            # Iterate over each store and search for the product
-            for index, row in df_stores.iterrows():
-                driver.get(row['url'])
-                time.sleep(2)  # Replace with explicit wait if possible
-                
-                # Find the product search input field and enter the product name
-                product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
-                product_search.clear()
-                product_search.send_keys(producto)
-                time.sleep(2)  # Replace with explicit wait if possible
-                product_search.send_keys(Keys.ENTER)
-                time.sleep(2)  # Replace with explicit wait if possible
-                
-                # Extract product information
-                html = driver.page_source
-                soup = BeautifulSoup(html, 'html.parser')
-                product_items = soup.find_all('div', attrs={'data-testid': lambda value: value and value.startswith('store-menu-item')})
-                
-                # Extract and store product data
-                for item in product_items:
-                    # Extract rich-text elements, which should contain the price and product name
-                    rich_texts = item.find_all('span', {'data-testid': 'rich-text'})
-                    if len(rich_texts) >= 2:
-                        price = rich_texts[0].get_text(strip=True)
-                        prod_name = rich_texts[1].get_text(strip=True)
-                        prod.append(prod_name)
-                        precios.append(price)
-                        tienda.append(row['name'])
-                        sucursal.append(row['sucursal'])
             
-            # Populate the DataFrame with the collected data
-            df = pd.DataFrame({
-                'producto': prod, 
-                'precio': precios, 
-                'tienda': tienda, 
-                'sucursal': sucursal, 
-                'direccion_busca': adress,
-                'fecha_consulta': pd.to_datetime('today').normalize()
-            })
-            
-            # Normalize text data
-            df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
 
-    except Exception as e:
-        print("An error occurred:", e)
-    finally:
-        driver.quit()  # Ensure the driver is quit properly
-
-    return df
+    return df_stores
 
 
 

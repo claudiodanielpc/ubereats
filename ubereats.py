@@ -20,7 +20,7 @@ from shapely import wkt
 options = webdriver.ChromeOptions()
 #Incognito
 options.add_argument('--incognito')
-options.add_argument('--headless')
+#options.add_argument('--headless')
 
 def buscador(tipo_busqueda: "básica", adress: str, producto: str):
     if tipo_busqueda == "básica":
@@ -135,7 +135,9 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
 
         # Normalize text data
         df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-
+        df['producto']=df['producto'].str.lower()
+        #Quitar acentos
+        df['producto']=df['producto'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         return df
 
 

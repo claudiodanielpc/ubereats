@@ -77,7 +77,7 @@ def basica(address, producto):
     #Completar la url
     df_stores['url']='https://www.ubereats.com'+df_stores['url']
     #Dejar solo si contienen la palabra "Soriana", "Sumesa","City Market", "Comer", "Chedraui"
-    df_stores=df_stores[df_stores['name'].str.contains('Soriana|Sumesa|City Market|Comer|Chedraui')]
+    #df_stores=df_stores[df_stores['name'].str.contains('Soriana|Sumesa|City Market|Comer|Chedraui')]
     #Añadir columna de búsqueda de código postal
     df_stores['cp']=cp
 

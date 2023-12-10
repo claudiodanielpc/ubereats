@@ -64,7 +64,6 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
         # Process store URLs and names
         df_stores['sucursal'] = df_stores['url'].apply(lambda x: x.split('/store/')[1].split('/')[0].replace('-', ' '))
         df_stores['url'] = 'https://www.ubereats.com' + df_stores['url']
-        df_stores = df_stores[df_stores['name'].str.contains('Soriana|Sumesa|City Market|Comer|Chedraui')]
         df_stores['cp'] = cp
 
         # Initialize lists for data collection
@@ -73,33 +72,36 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
         tienda = []
         sucursal = []
 
-        # Search products in each store
         for index, row in df_stores.iterrows():
-            print("Busca producto", producto, "en", row['sucursal'])
-            url = row['url']
-            store_name = row['name']
-            store_sucursal = row['sucursal']
-            driver.get(url)
+            for producto in productos:  # This loop was missing
+                print("Busca producto", producto, "en", row['sucursal'])
+                url = row['url']
+                store_name = row['name']
+                store_sucursal = row['sucursal']
+                driver.get(url)
 
-            time.sleep(3)
-            
-            try:
+                # Allow time for the page to load
+                time.sleep(3)
+                
                 # Find the product search input field and enter the product name
                 product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
                 product_search.clear()
                 product_search.send_keys(producto)
                 time.sleep(3)
                 product_search.send_keys(Keys.ENTER)
+                
+                # Allow time for the search results to load
                 time.sleep(3)
                 
-                # Extract product information
+                # Get the HTML of the page and parse it with BeautifulSoup
                 html = driver.page_source
                 soup = BeautifulSoup(html, 'html.parser')
                 product_items = soup.find_all('div', attrs={'data-testid': lambda value: value and value.startswith('store-menu-item')})
                 
                 for item in product_items:
+                    # Extract rich-text elements, which should contain the price and product name
                     rich_texts = item.find_all('span', {'data-testid': 'rich-text'})
-                    if len(rich_texts) >= 2:
+                    if len(rich_texts) >= 2:  # Make sure there are at least two rich-text elements
                         try:
                             price = rich_texts[0].get_text(strip=True)
                             prod_name = rich_texts[1].get_text(strip=True)
@@ -114,16 +116,11 @@ def buscador(tipo_busqueda: "básica", adress: str, producto: str):
                             tienda.append(store_name)
                             sucursal.append(store_sucursal)
                     else:
+                        # If not enough span elements found, append None values
                         prod.append(None)
                         precios.append(None)
                         tienda.append(store_name)
                         sucursal.append(store_sucursal)
-            except Exception as e:
-                print(f"Error extracting data for store: {store_name} - {e}")
-                prod.append(None)
-                precios.append(None)
-                tienda.append(store_name)
-                sucursal.append(store_sucursal)
 
         # Create DataFrame with collected data
         df = pd.DataFrame({

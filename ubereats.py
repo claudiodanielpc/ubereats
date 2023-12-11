@@ -431,7 +431,7 @@ def search_products(mode, address, producto, url=None):
         #Split columna de precio en dos columnas si tiene "/"
         df_avanzada[["precio","unidad"]]=df_avanzada["precio"].str.split("/",expand=True)
         #Transformar columna de precio a float
-        df_avanzada["precio"]=pd.to_numeric(df["precio"])
+        df_avanzada["precio"]=pd.to_numeric(df_avanzada["precio"])
     else:
         print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
         driver.quit()

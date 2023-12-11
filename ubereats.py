@@ -216,7 +216,7 @@ def avanzada(url, producto):
         print(f"Producto no encontrado en tienda") 
 
     # Create DataFrame from collected data
-    df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'fecha_consulta':pd.to_datetime('today')})
+    df = pd.DataFrame({'producto': prod, 'precio': precios, 'fecha_consulta':pd.to_datetime('today')})
     #Todo a minúsculas
     df['producto']=df['producto'].str.lower()
     #Quitar acentos

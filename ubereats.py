@@ -122,6 +122,8 @@ def search_products(mode, address, producto, url=None):
         df_basica['producto'] = df_basica['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         #Eliminar guiones de sucursal
         df_basica['sucursal']=df_basica['sucursal'].str.replace('-',' ')
+        #Agregar busqueda
+        df_basica['busqueda']=producto
 
 
 
@@ -200,6 +202,8 @@ def search_products(mode, address, producto, url=None):
 
         #Transformar columna de precio a float
         df_avanzada["precio"]=pd.to_numeric(df_avanzada["precio"])
+        #Agregar busqueda
+        df_avanzada['busqueda']=producto
     else:
         print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
         driver.quit()

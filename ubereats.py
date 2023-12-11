@@ -16,7 +16,7 @@ def search_products(mode, address, producto, url=None):
     options.add_argument('--disable-blink-features=AutomationControlled')
     options.add_argument('--disable-cache')
     options.add_argument('--disable-cookies')
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
     driver = webdriver.Chrome(service=Service(), options=options)
     driver.set_window_size(1920, 1080)
     wait = WebDriverWait(driver, 10)
@@ -191,6 +191,7 @@ def search_products(mode, address, producto, url=None):
         df_avanzada["producto"]=df_avanzada["producto"].astype(str)
         df_avanzada['producto'] = df_avanzada['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         df_avanzada['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
+        df_avanzada['precio'] = df_avanzada['precio'].astype(str)
         df_avanzada["precio"]=df_avanzada["precio"].str.replace("MX$","")
         #Eliminar comas
         df_avanzada["precio"]=df_avanzada["precio"].str.replace(",","")

@@ -435,11 +435,9 @@ def search_products(mode, address, producto, url=None):
         #Transformar columna de precio a float
         df["precio"]=pd.to_numeric(df["precio"])
 
- # Close the driver
     driver.quit()
-
-
     return df
+    
 
 
 

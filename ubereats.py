@@ -178,6 +178,8 @@ def avanzada(url, producto):
     #Usar códigos postales de la df de supermercados
     control_direct.send_keys('06720 cdmx')
     time.sleep(3)
+    control_direct.send_keys(Keys.RETURN)
+    time.sleep(3)
     try:
         product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
         product_search.clear()

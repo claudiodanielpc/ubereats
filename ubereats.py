@@ -157,6 +157,68 @@ def basica(address, producto):
 
 
 
+def avanzada(url, producto):
+    # Initialize lists to store data
+    prod = []
+    precios = []
+    tienda = []
+    sucursal = []
+
+
+    driver.get(url)
+    print("Buscando ", producto, " en el supermercado, por favor espere⏳...")
+    # # Allow time for the page to load
+    time.sleep(3)
+    try:
+        product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
+        product_search.clear()
+        product_search.send_keys(producto)
+        time.sleep(3)
+        product_search.send_keys(Keys.ENTER)
+        time.sleep(10)
+# Get the HTML of the page and parse it with BeautifulSoup
+        html = driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+                    #product_items = soup.find_all('div', attrs={'data-testid': lambda value: value and value.startswith('store-menu-item')})
+        product_items=soup.find_all('li', class_=lambda value: value and value.startswith("g1"))
+
+        for item in tqdm(product_items, total=len(product_items), desc="Recolectando productos y precios😊"):
+                        # Extract rich-text elements, which should contain the price and product name
+            rich_texts = item.find_all('span', {'data-testid': 'rich-text'})
+
+            if len(rich_texts) >= 2:  # Make sure there are at least two rich-text elements
+                try:
+                    price = rich_texts[0].get_text(strip=True)
+                    if "•" in rich_texts[1].text:
+                        prod_name = rich_texts[3].get_text(strip=True)
+                    else:
+                        prod_name = rich_texts[1].get_text(strip=True)
+                    prod.append(prod_name)
+                    precios.append(price)
+                    # tienda.append(store_name)
+                    # sucursal.append(store_sucursal)
+                except Exception as e:
+                    print(f"Producto no encontrado en tienda")
+                    prod.append(None)
+                    precios.append(None)
+            else:
+                        # If not enough span elements found, append None values
+                prod.append(None)
+                precios.append(None)
+                        
+    except Exception as e:
+        print(f"Producto no encontrado en tienda") 
+
+    # Create DataFrame from collected data
+    df = pd.DataFrame({'producto': prod, 'precio': precios, 'tienda': tienda, 'sucursal': sucursal, 'fecha_consulta':pd.to_datetime('today')})
+    #Todo a minúsculas
+    df['producto']=df['producto'].str.lower()
+    #Quitar acentos
+    df['producto']=df['producto'].str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
+
+    return df      
+
+
 
 
 

@@ -173,7 +173,8 @@ def avanzada(url, producto):
     # # Allow time for the page to load
     time.sleep(3)
     #Presionar escape
-    driver.find_element_by_tag_name('body').send_keys(Keys.ESCAPE)
+    control_direct = wait.until(EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input")))
+    control_direct.send_keys(Keys.ESCAPE)
     try:
         product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
         product_search.clear()

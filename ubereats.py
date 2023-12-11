@@ -350,6 +350,24 @@ def search_products(mode, address, producto, url=None):
             except Exception as e:
                 print(f"Producto no encontrado en tienda {store_name}")
 
+        df=pd.DataFrame({'producto': prod,'precio': precios,'tienda': tienda, 'sucursal':sucursal,'fecha_consulta': pd.to_datetime('today')})
+        df["precio"] = df["precio"].str.replace("MX$", "").str.replace(",", "")
+        df[["precio", "unidad"]] = df["precio"].str.split("/", expand=True)
+        df["precio"] = pd.to_numeric(df["precio"], errors='coerce')
+        df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
+
+
+
+
+
+
+
+
+
+
+
+
+
     elif mode == 'avanzada' and url is not None:
         # Open the provided URL for advanced mode
         driver.get(url)
@@ -394,25 +412,13 @@ def search_products(mode, address, producto, url=None):
     # Close the driver
     driver.quit()
 
-    # Create DataFrame from collected data
-    df = pd.DataFrame({
-        'producto': prod,
-        'precio': precios,
-        'tienda': tienda,
-        'fecha_consulta': pd.to_datetime('today')
-    })
+        # Create DataFrame from collected data
+        df = pd.DataFrame({
+            'producto': prod,
+            'precio': precios,
+            'fecha_consulta': pd.to_datetime('today')
+        })
 
-    # Post-processing of DataFrame
-    df["precio"] = df["precio"].str.replace("MX$", "").str.replace(",", "")
-    df[["precio", "unidad"]] = df["precio"].str.split("/", expand=True)
-    df["precio"] = pd.to_numeric(df["precio"], errors='coerce')
-    df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-    df['sucursal']=url
-    df['sucursal']=df['sucursal'].str.split('/store/').str[1]
-    #Quitar lo que está después del segundo /
-    df['sucursal']=df['sucursal'].str.split('/').str[0]
-    #Eliminar "-" y reemplazar por espacio
-    df['sucursal']=df['sucursal'].str.replace('-',' ')
 
 
     return df

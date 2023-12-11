@@ -309,9 +309,17 @@ def search_products(mode, address, producto, url=None):
             store_name = row['name']
             store_sucursal = row['sucursal']
             driver.get(store_url)
-
-            # Search for the product
             time.sleep(3)
+        
+            control_direct = wait.until(EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input")))
+            control_direct.clear()
+        #     #Usar códigos postales de la df de supermercados
+            control_direct.send_keys('06720 cdmx')
+            time.sleep(3)
+            control_direct.send_keys(Keys.RETURN)
+            time.sleep(3)
+            # Search for the product
+           
             try:
                 product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
                 product_search.clear()

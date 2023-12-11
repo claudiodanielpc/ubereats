@@ -114,7 +114,10 @@ def search_products(mode, address, producto, url=None):
 
         df_basica=pd.DataFrame({'producto': prod,'precio': precios,'tienda': tienda, 'sucursal':sucursal,'fecha_consulta': pd.to_datetime('today')})
         df_basica["precio"] = df_basica["precio"].str.replace("MX$", "").str.replace(",", "")
-        df_basica[["precio", "unidad"]] = df_basica["precio"].str.split("/", expand=True)
+        try:
+            df_basica[["precio", "unidad"]] = df_basica["precio"].str.split("/", expand=True)
+        except:
+            pass
         df_basica["precio"] = pd.to_numeric(df_basica["precio"], errors='coerce')
         df_basica['producto'] = df_basica['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         #Eliminar guiones de sucursal
@@ -190,7 +193,11 @@ def search_products(mode, address, producto, url=None):
         #Eliminar comas
         df_avanzada["precio"]=df_avanzada["precio"].str.replace(",","")
         #Split columna de precio en dos columnas si tiene "/"
-        df_avanzada[["precio","unidad"]]=df_avanzada["precio"].str.split("/",expand=True)
+        try:
+            df_avanzada[["precio","unidad"]]=df_avanzada["precio"].str.split("/",expand=True)
+        except:
+            pass
+
         #Transformar columna de precio a float
         df_avanzada["precio"]=pd.to_numeric(df_avanzada["precio"])
     else:

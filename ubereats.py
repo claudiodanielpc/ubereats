@@ -409,16 +409,26 @@ def search_products(mode, address, producto, url=None):
         except Exception as e:
             print(f"Producto no encontrado en tienda")
 
-    # Close the driver
-    driver.quit()
+   
 
         # Create DataFrame from collected data
         df = pd.DataFrame({
             'producto': prod,
             'precio': precios,
-            'fecha_consulta': pd.to_datetime('today')
-        })
+            'fecha_consulta': pd.to_datetime('today')})
 
+        df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
+        df['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
+        df["precio"]=df["precio"].str.replace("MX$","")
+        #Eliminar comas
+        df["precio"]=df["precio"].str.replace(",","")
+        #Split columna de precio en dos columnas si tiene "/"
+        df[["precio","unidad"]]=df["precio"].str.split("/",expand=True)
+        #Transformar columna de precio a float
+        df["precio"]=pd.to_numeric(df["precio"])
+
+ # Close the driver
+    driver.quit()
 
 
     return df

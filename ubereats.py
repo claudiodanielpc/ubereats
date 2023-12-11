@@ -355,7 +355,8 @@ def search_products(mode, address, producto, url=None):
         df[["precio", "unidad"]] = df["precio"].str.split("/", expand=True)
         df["precio"] = pd.to_numeric(df["precio"], errors='coerce')
         df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-        df['sucursal'] = df["sucursal"].split('/store/')[1].split('/')[0].replace('-', ' ')
+        #Eliminar guiones de sucursal
+        df['sucursal']=df['sucursal'].str.replace('-',' ')
 
 
 

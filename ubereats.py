@@ -188,7 +188,7 @@ def search_products(mode, address, producto, url=None):
             'producto': prod,
             'precio': precios,
             'fecha_consulta': pd.to_datetime('today')})
-
+        df_avanzada["producto"]=df_avanzada["producto"].astype(str)
         df_avanzada['producto'] = df_avanzada['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         df_avanzada['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
         df_avanzada["precio"]=df_avanzada["precio"].str.replace("MX$","")

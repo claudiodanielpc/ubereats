@@ -174,7 +174,9 @@ def avanzada(url, producto):
     time.sleep(3)
     #Presionar escape
     control_direct = wait.until(EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input")))
-    control_direct.send_keys(Keys.ESCAPE)
+    control_direct.clear()
+    #Usar códigos postales de la df de supermercados
+    control_direct.send_keys('06720 cdmx')
     time.sleep(3)
     try:
         product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")

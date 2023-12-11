@@ -265,7 +265,8 @@ def search_products(mode, address, producto, url=None):
     precios = []
     tienda = []
     sucursal = []
-    df=None
+    df_basica=None
+    df_avanzada=None
     if mode == 'basica' and url is None:
         # Navigate to the initial URL for basic mode
         basic_url = "https://www.ubereats.com/category-feed/Shop?mod=locationManager&modctx=feed&next=%2Fcategory-feed%2FShop%3Fpl%3DJTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%253D%26ps%3D1%26sc%3DSHORTCUTS&pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkVqZSUyMHZpYWwlMjA0JTIwU3VyJTIwWG9sYSUyMDE5NSUyMiUyQyUyMnJlZmVyZW5jZSUyMiUzQSUyMmY0OGYwNmQ2LTcyMjEtNzk0ZS1lODE4LTI5NTIxY2JlN2NlMCUyMiUyQyUyMnJlZmVyZW5jZVR5cGUlMjIlM0ElMjJ1YmVyX3BsYWNlcyUyMiUyQyUyMmxhdGl0dWRlJTIyJTNBMTkuMzkzOSUyQyUyMmxvbmdpdHVkZSUyMiUzQS05OS4xMzg3MTQlN0Q%3D&ps=1&sc=SHORTCUTS"
@@ -350,13 +351,13 @@ def search_products(mode, address, producto, url=None):
             except Exception as e:
                 print(f"Producto no encontrado en tienda {store_name}")
 
-        df=pd.DataFrame({'producto': prod,'precio': precios,'tienda': tienda, 'sucursal':sucursal,'fecha_consulta': pd.to_datetime('today')})
-        df["precio"] = df["precio"].str.replace("MX$", "").str.replace(",", "")
-        df[["precio", "unidad"]] = df["precio"].str.split("/", expand=True)
-        df["precio"] = pd.to_numeric(df["precio"], errors='coerce')
-        df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
+        df_basica=pd.DataFrame({'producto': prod,'precio': precios,'tienda': tienda, 'sucursal':sucursal,'fecha_consulta': pd.to_datetime('today')})
+        df_basica["precio"] = df_basica["precio"].str.replace("MX$", "").str.replace(",", "")
+        df_basica[["precio", "unidad"]] = df_basica["precio"].str.split("/", expand=True)
+        df_basica["precio"] = pd.to_numeric(df["precio"], errors='coerce')
+        df_basica['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         #Eliminar guiones de sucursal
-        df['sucursal']=df['sucursal'].str.replace('-',' ')
+        df_basica['sucursal']=df_basica['sucursal'].str.replace('-',' ')
 
 
 
@@ -413,31 +414,34 @@ def search_products(mode, address, producto, url=None):
         except Exception as e:
             print(f"Producto no encontrado en tienda")
     else:
-        print("En el modo 'basica' no se puede ingresar una URL. Por favor intente de nuevo.")
+        print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
         driver.quit()
         return None
 
    
 
         # Create DataFrame from collected data
-        df = pd.DataFrame({
+        df_avanzada = pd.DataFrame({
             'producto': prod,
             'precio': precios,
             'fecha_consulta': pd.to_datetime('today')})
 
-        df['producto'] = df['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
-        df['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
-        df["precio"]=df["precio"].str.replace("MX$","")
+        df_avanzada['producto'] = df_avanzada['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
+        df_avanzada['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
+        df_avanzada["precio"]=df["precio"].str.replace("MX$","")
         #Eliminar comas
-        df["precio"]=df["precio"].str.replace(",","")
+        df_avanzada["precio"]=df_avanzada["precio"].str.replace(",","")
         #Split columna de precio en dos columnas si tiene "/"
-        df[["precio","unidad"]]=df["precio"].str.split("/",expand=True)
+        df_avanzada[["precio","unidad"]]=df_avanzada["precio"].str.split("/",expand=True)
         #Transformar columna de precio a float
-        df["precio"]=pd.to_numeric(df["precio"])
+        df_avanzada["precio"]=pd.to_numeric(df["precio"])
 
     driver.quit()
-    return df
-    
+    if mode == 'basica':
+        return df_basica
+    elif mode == 'avanzada':
+        return df_avanzada
+
 
 
 

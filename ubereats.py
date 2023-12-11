@@ -425,7 +425,7 @@ def search_products(mode, address, producto, url=None):
 
         df_avanzada['producto'] = df_avanzada['producto'].str.lower().str.normalize('NFKD').str.encode('ascii', errors='ignore').str.decode('utf-8')
         df_avanzada['sucursal'] = url.split('/store/')[1].split('/')[0].replace('-', ' ')
-        df_avanzada["precio"]=df["precio"].str.replace("MX$","")
+        df_avanzada["precio"]=df_avanzada["precio"].str.replace("MX$","")
         #Eliminar comas
         df_avanzada["precio"]=df_avanzada["precio"].str.replace(",","")
         #Split columna de precio en dos columnas si tiene "/"
@@ -436,7 +436,7 @@ def search_products(mode, address, producto, url=None):
         print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
         driver.quit()
         return None
-        
+
     driver.quit()
     if mode == 'basica':
         return df_basica

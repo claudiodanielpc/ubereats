@@ -175,6 +175,7 @@ def avanzada(url, producto):
     #Presionar escape
     control_direct = wait.until(EC.element_to_be_clickable((By.ID, "location-typeahead-location-manager-input")))
     control_direct.send_keys(Keys.ESCAPE)
+    time.sleep(3)
     try:
         product_search = driver.find_element(By.ID, "search-suggestions-typeahead-input")
         product_search.clear()

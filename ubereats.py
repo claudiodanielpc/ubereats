@@ -155,8 +155,8 @@ def search_products(mode, address, producto, url=None):
             # Get the HTML of the page and parse it with BeautifulSoup
             html = driver.page_source
             soup = BeautifulSoup(html, 'html.parser')
-            product_items = soup.find_all('li', class_=lambda value: value and value.startswith("g1"))
-
+            #product_items = soup.find_all('li', class_=lambda value: value and value.startswith("g1"))
+            product_items = soup.find_all('div', attrs={'data-testid': lambda value: value and value.startswith('store-menu-item')})
             for item in tqdm(product_items, total=len(product_items), desc="Recolectando productos y precios😊"):
                 rich_texts = item.find_all('span', {'data-testid': 'rich-text'})
 

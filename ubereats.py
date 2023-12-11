@@ -413,10 +413,7 @@ def search_products(mode, address, producto, url=None):
 
         except Exception as e:
             print(f"Producto no encontrado en tienda")
-    else:
-        print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
-        driver.quit()
-        return None
+
 
    
 
@@ -435,7 +432,11 @@ def search_products(mode, address, producto, url=None):
         df_avanzada[["precio","unidad"]]=df_avanzada["precio"].str.split("/",expand=True)
         #Transformar columna de precio a float
         df_avanzada["precio"]=pd.to_numeric(df["precio"])
-
+    else:
+        print("En el modo 'basica' no se puede ingresar una URL. Si intenta con el modo avanzada, es necesaria la url. Por favor intente de nuevo.")
+        driver.quit()
+        return None
+        
     driver.quit()
     if mode == 'basica':
         return df_basica

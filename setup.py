@@ -6,7 +6,7 @@ setup(
     packages=find_packages(),
        install_requires=[
         'pandas',
-        'geopandas'
+        'geopandas',
         'bs4',
         'requests',
         'selenium',

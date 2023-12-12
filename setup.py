@@ -6,10 +6,13 @@ setup(
     packages=find_packages(),
        install_requires=[
         'pandas',
+        'geopandas'
         'bs4',
         'requests',
         'selenium',
-        'unidecode',
+        'setuptools',
+        'shapely',
+        'tqdm',
         'numpy',
     ],
     include_package_data=True, 

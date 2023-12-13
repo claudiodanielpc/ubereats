@@ -46,3 +46,13 @@ ue.search_products(mode="avanzada",address="06720 mx", producto="manzana", url="
 ![image](https://github.com/claudiodanielpc/ubereats/assets/61884019/0a366fb0-5c92-4b66-93f8-a72db99a9e05)
 
 En este caso, la búsqueda de manzana se hizo específicamente en Soriana Parque Delta.
+
+
+
+## Nota importante🚨
+
+Esta librería funciona utiliza por detrás Chrome y chromedriver. Asegúrate de que tu chromedriver sea compatible con tu versión del navegador. Si requieres descargar una versión actualizada del driver, aquí está la liga:
+
+
+https://chromedriver.chromium.org/home
+

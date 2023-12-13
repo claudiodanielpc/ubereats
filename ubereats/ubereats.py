@@ -18,7 +18,7 @@ def search_products(mode, address, producto, url=None):
     options.add_argument('--disable-cache')
     options.add_argument('--disable-cookies')
     options.add_argument('--headless')
-    driver = webdriver.Chrome(service=Service(navegador()), options=options)
+    driver = webdriver.Chrome(service=Service(navegador.select_chromedriver()), options=options)
     driver.set_window_size(1920, 1080)
     wait = WebDriverWait(driver, 10)
 

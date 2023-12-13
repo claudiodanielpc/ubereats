@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import time
+from ubereats.tools import navegador
 
 def search_products(mode, address, producto, url=None):
     # Set up the webdriver
@@ -17,7 +18,7 @@ def search_products(mode, address, producto, url=None):
     options.add_argument('--disable-cache')
     options.add_argument('--disable-cookies')
     options.add_argument('--headless')
-    driver = webdriver.Chrome(service=Service(), options=options)
+    driver = webdriver.Chrome(service=Service(navegador()), options=options)
     driver.set_window_size(1920, 1080)
     wait = WebDriverWait(driver, 10)
 

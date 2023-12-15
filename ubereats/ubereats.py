@@ -20,7 +20,7 @@ def search_products(mode, address, producto, url=None):
     options.add_argument('--headless')
     driver = webdriver.Chrome(service=Service(navegador.select_chromedriver()), options=options)
     driver.set_window_size(1920, 1080)
-    wait = WebDriverWait(driver, 10)
+    wait = WebDriverWait(driver, 60)
 
     # Initialize lists to store data
     prod = []
@@ -115,6 +115,7 @@ def search_products(mode, address, producto, url=None):
 
         df_basica=pd.DataFrame({'producto': prod,'precio': precios,'tienda': tienda, 'sucursal':sucursal,'fecha_consulta': pd.to_datetime('today')})
         df_basica["precio"] = df_basica["precio"].str.replace("MX$", "").str.replace(",", "")
+        
         try:
             df_basica[["precio", "unidad"]] = df_basica["precio"].str.split("/", expand=True)
         except:
